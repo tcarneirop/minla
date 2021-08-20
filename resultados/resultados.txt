@@ -1,0 +1,210 @@
+			 RELATÓRIO DAS INSTÂNCIAS 
+INSTÂNCIA: minla-n24-t0.100.txt
+
+ CPU Time  = 3e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+
+INSTÂNCIA: minla-n24-t0.200.txt
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+
+INSTÂNCIA: GraphNug_n_12_t5.dat
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11
+
+INSTÂNCIA: GraphNug_n_20_t5.dat
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
+
+INSTÂNCIA: minla-n25-t0.200.txt
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+
+INSTÂNCIA: minla-n25-t0.100.txt
+
+ CPU Time  = 1e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+
+INSTÂNCIA: minla-n24-t0.300.txt
+
+ CPU Time  = 1e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+
+INSTÂNCIA: minla-n27-t0.100.txt
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26
+
+INSTÂNCIA: GraphNug_n_15_t5.dat
+
+ CPU Time  = 1e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14
+
+INSTÂNCIA: minla-n26-t0.300.txt
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+
+INSTÂNCIA: GraphNug_n_16_t6.dat
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+
+INSTÂNCIA: minla-n25-t0.600.txt
+
+ CPU Time  = 1e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+
+INSTÂNCIA: GraphNug_n_23_t5.dat
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22
+
+INSTÂNCIA: minla-n26-t0.200.txt
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+
+INSTÂNCIA: minla-n25-t0.500.txt
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+
+INSTÂNCIA: minla-n26-t0.100.txt
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+
+INSTÂNCIA: minla-n24-t0.800.txt
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+
+INSTÂNCIA: GraphNug_n_17_t6.dat
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+
+INSTÂNCIA: minla-n24-t0.500.txt
+
+ CPU Time  = 2e-06 seg
+
+ Final Cost:0
+
+ GAP:1e+12
+
+ Solution
+ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+
