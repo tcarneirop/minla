@@ -3,10 +3,12 @@
 #include <sys/time.h>
 #include <dirent.h>
 
+
 #include "headers/grafo.h"
 //eu// #include "randomgenerator.h"
 //eu// #include "multistart.h"
-//eu// #include "hillclimb.h"
+#include "headers/hillclimb.h"
+#include "headers/full_perm.h"
 //eu// #include "greedygenerator.h"
 //eu// #include "greedyadaptativegen.h"
 //eu// #include "grasp.h"
@@ -72,6 +74,7 @@ int main(int argc, char *argv[])
                     output << "INSTÂNCIA: " << entrada->d_name << endl;
 
 
+                    //this is the permutatiob
                     int* out = new int[grafo.numNodes];
 
                     int i = {0};
@@ -93,9 +96,10 @@ int main(int argc, char *argv[])
 
                     /// RandomGenerator rg(&grafo);
 
-                    //eu// HillClimb hc(&grafo);
+                    HillClimb hc(&grafo);
 
-                    //eu// hc.findInitialPoint(out, grafo.numNodes);
+                    hc.findInitialPoint(out, grafo.numNodes);
+
 
                     // MultiStart ms(&grafo, false); OK!
 
@@ -113,7 +117,7 @@ int main(int argc, char *argv[])
 
                     // TabuSearch ts(&grafo, &gag, 1000); OK!
 
-                    // ILS ils(&grafo, &gag, &vnd); OK!
+                    // ILS ils(&grafo, &gag, &vnd);
 
                     // GLS gls(&grafo, &gag, &vnd); OK!
 
@@ -123,9 +127,10 @@ int main(int argc, char *argv[])
 
                     //eu// GA ga(&grafo, 1000);
 
-                    int result = 0;
 
-                    cpu0 = get_cpu_time();
+          
+
+                    int result =  hc.solve(out);
 
                     /// result = gg.solve(out);
 
@@ -148,9 +153,9 @@ int main(int argc, char *argv[])
                     */
 
 
-                    cpu1 = get_cpu_time();
+                    
 
-                    std::cout << "\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
+                   
 
                     output << "\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
 
@@ -169,11 +174,19 @@ int main(int argc, char *argv[])
                     }
                             
                     output << "\n\n";
+                    cpu0 = get_cpu_time();
+                    unsigned long long qtd_sol = 0ULL, tree_size = 0ULL;
+                    std::cout << "\n Full perm:" << std::endl;
+                    result = BP_all_perm_serial(&tree_size, &qtd_sol, &grafo);
+                    std::cout << "\n Best: " << result <<std::endl<<"qtd: "<<qtd_sol<<std::endl;
+                    cpu1 = get_cpu_time();
+                    std::cout << "\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
+                    output.close();
 
                 }
             }
 
-            output.close();
+            
 
         }
         catch (string& s) {

@@ -19,7 +19,7 @@ Grafo::Grafo(const char* dir, const char* filename)
 
 
     if(numNodes < 2){
-        cerr << " ERROR:minimum number of vertices not accept." << std::endl;
+        cerr << " ERROR: minimum number of vertices not accepted." << std::endl;
         exit(1);
     }
 
