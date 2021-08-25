@@ -39,6 +39,7 @@ int LocalSearch::solve(int Output[], int bestCost, bool firstImprove){
 
                 if(verbose){
                     cout << " Local Search Cost:"<< bestCost + delta << endl;
+                    
                 }
 
                 if(firstImprove){
