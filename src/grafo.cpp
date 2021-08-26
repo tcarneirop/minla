@@ -75,6 +75,22 @@ inline int abs(int x){
 
 //tag eh a permutacao vigente
 
+
+int Grafo::cost_test(int tag[], int len){
+    int sum = 0;
+    for(int i = 0 ; i< len ; i++){
+        int* list = Adj[i];
+        for(int j = 0 ; j < Neighbors[i].size(); j++){
+            if(i < list[j]){
+                sum += abs(tag[i] - tag[ list[j] ]);
+            }
+        }
+    }
+    return sum;
+}
+
+
+
 int Grafo::cost(int tag[]){
     int sum = 0;
     for(int i = 0 ; i< numNodes ; i++){
@@ -95,6 +111,23 @@ int Grafo::cost(int tag[]){
 //   Quem pode ser todos ou os que mudaram na permutação. Tem que checar a chamada da função para saber
 
 int Grafo::subCost(int tag[], int vertices[], int len){
+
+    std::cout <<"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    std::cout<<" Len: "<< len << std::endl;
+    std::cout<<" Vertices: "<< std::endl;
+
+    for(int k = 0; k < len; k++){
+        std::cout   << " " << vertices[k];
+    }
+
+    std::cout<<" tag: "<< std::endl;
+
+    for(int k = 0; k < len; k++){
+        std::cout << " " << tag[k];
+    }
+
+
+
     int cost = 0;
     for(int i = 0; i < len; i++){
         int v = vertices[i];
@@ -105,6 +138,7 @@ int Grafo::subCost(int tag[], int vertices[], int len){
             cost += abs( tag[list[x]] - tagv );
         }
     }
+
 
     for(int i = 0; i < len; i++){
         for(int j = i + 1; j < len; j++){

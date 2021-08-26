@@ -32,6 +32,8 @@ public:
     static void flip(const int i, const int j, int tag[]);
     static bool IsPermutation(Solution s);
     double calculeGap(int solValue);
+    int cost_test(int tag[], int len);
+
 
     int** Adj; //adj[i] = vetor de vertices adjacentes do vertice i
     set<int>* Neighbors; //set[i] = conjunto de vertices adjacentes do vertice i

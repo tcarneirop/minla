@@ -18,7 +18,7 @@ int HillClimb::solve(int tagOutput[]){
     int nc = grafo->cost(tagOutput);
     do{
         c = nc;
-        nc = localsearch.solve(tagOutput, nc, true);
+        nc = localsearch.solve(tagOutput, nc, false);
     }while(nc < c);
 
     return nc;
