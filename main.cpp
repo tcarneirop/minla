@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 
                     //this is the permutatiob
                     int* out = new int[grafo.numNodes];
+                    int* permutation = new int[grafo.numNodes];
 
                     int i = {0};
                     std::generate(out, out+grafo.numNodes, [&i]{ return i++; });
@@ -128,7 +129,6 @@ int main(int argc, char *argv[])
                     //eu// GA ga(&grafo, 1000);
 
 
-          
 
                     int result =  hc.solve(out);
 
@@ -153,10 +153,6 @@ int main(int argc, char *argv[])
                     */
 
 
-                    
-
-                   
-
                     output << "\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
 
                     std::cout << "\n Final Cost:" << result << std::endl;
@@ -176,18 +172,59 @@ int main(int argc, char *argv[])
                     output << "\n\n";
                     cpu0 = get_cpu_time();
                     unsigned long long qtd_sol = 0ULL, tree_size = 0ULL;
-                    std::cout << "\n Full perm:" << std::endl;
-                    result = BP_all_perm_serial(&tree_size, &qtd_sol, &grafo);
-                    std::cout << "\n Best: " << result <<std::endl<<"qtd: "<<qtd_sol<<std::endl;
+                    std::cout <<"\n Full perm:" << std::endl;
+                    result = BP_all_perm_serial(&tree_size, &qtd_sol, &grafo, permutation);
+
+                    std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
+                    std::cout << "\n Permutation: ";
+                    
+                    for (auto i = 0; i < grafo.numNodes; ++i)
+                        std::cout << permutation[i] << ' ';
+
+                    std::cout<<std::endl<<std::endl<<"Qtd: "<<qtd_sol<<std::endl;
+                    std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
+
                     cpu1 = get_cpu_time();
-                    std::cout << "\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
+                    std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
+
+
+
+
+                    output << "\n\n";
+                    cpu0 = get_cpu_time();
+                    qtd_sol = 0ULL;
+                    tree_size = 0ULL;
+                    std::cout <<"\n NEW Full perm:" << std::endl;
+                    result = NEW_BP_all_perm_serial(&tree_size, &qtd_sol, &grafo, permutation);
+
+
+                    std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
+                    std::cout << "\n Permutation: ";
+                    
+                    for (auto i = 0; i < grafo.numNodes; ++i)
+                        std::cout << permutation[i] << ' ';
+
+                    std::cout<<std::endl<<std::endl<<"Qtd: "<<qtd_sol<<std::endl;
+                    std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
+
+                    cpu1 = get_cpu_time();
+
+
+
+
+                    std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
+
+
+
+
                     output.close();
+
+
 
                 }
             }
 
-            
-
+        
         }
         catch (string& s) {
             std::cerr << s << std::endl;

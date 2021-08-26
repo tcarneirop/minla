@@ -41,12 +41,12 @@ module queens_serial{
 						num_sols+=1;
 					
 					}
-					else
+					else //if depth
 						continue;
 				}
-				else
+				else//if stilllegal
 					continue;
-			}
+			}//first else
 
 			depth -= 1;
 			control &= ~(_ONE_<<board[depth]);

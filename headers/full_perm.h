@@ -9,7 +9,8 @@
 
 
 
-int BP_all_perm_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo *gr);
+int BP_all_perm_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo *gr, int *permutation);
 
+int NEW_BP_all_perm_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo *grafo, int *permutation);
 
 #endif
