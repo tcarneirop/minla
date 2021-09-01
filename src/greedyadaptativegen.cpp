@@ -83,6 +83,12 @@ int GreedyAdaptativeGen::solve(int output[]){
 
   //  cout << "GreedyAdaptativeGen Done" << endl;
 
+    std::cout<<"\n"<<" Greedy vec: "<<"\n";
+        for(int k = 0; k < grafo->numNodes; k++){
+            std::cout   << " " << output[k];
+    }
+
+
     return grafo->cost(output);
 
 }

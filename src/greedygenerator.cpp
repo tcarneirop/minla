@@ -48,6 +48,5 @@ int GreedyGenerator::solve(int output[]){
         }
     }
 
-
     return grafo->cost(output);
 }

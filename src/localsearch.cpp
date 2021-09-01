@@ -190,8 +190,6 @@ int LocalSearch::flipDelta(int i, int j, int k, int tag[], int var){
     auxFlip3[1] = j;
     auxFlip3[2] = k;
 
-
-    std::cout<<"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
     int delta = grafo->subCost(tag, auxFlip3, 3);
 
     if(var == 0){
@@ -201,8 +199,6 @@ int LocalSearch::flipDelta(int i, int j, int k, int tag[], int var){
         tag[k] = tag[j];
         tag[j] = aux;
 
-
-              std::cout<<"ccccccccccccccccccccccccccccccccc";
         delta = grafo->subCost(tag, auxFlip3, 3) - delta;
 
         //kij -> ijk

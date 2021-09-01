@@ -81,7 +81,14 @@ int Grafo::cost_test(int tag[], int len){
     for(int i = 0 ; i< len ; i++){
         int* list = Adj[i];
         for(int j = 0 ; j < Neighbors[i].size(); j++){
-            if(i < list[j]){
+
+            if( list[j] >= len) //not yet in the permutation
+              {
+                //std::cout<<"Out of permutation: node "<<list[j]<<"\n";
+                continue;
+              }  
+            
+            if(i < list[j]){/// por que i < list[j]?
                 sum += abs(tag[i] - tag[ list[j] ]);
             }
         }
@@ -89,16 +96,15 @@ int Grafo::cost_test(int tag[], int len){
     return sum;
 }
 
-
-
 int Grafo::cost(int tag[]){
     int sum = 0;
     for(int i = 0 ; i< numNodes ; i++){
         int* list = Adj[i];
-        for(int j = 0 ; j < Neighbors[i].size(); j++){
+        for(int j = 0 ; j < Neighbors[i].size(); j++){    
             if(i < list[j]){
                 sum += abs(tag[i] - tag[ list[j] ]);
             }
+
         }
     }
     return sum;
