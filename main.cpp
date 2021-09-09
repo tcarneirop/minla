@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
                     cpu0 = get_cpu_time();
                     unsigned long long qtd_sol = 0ULL, tree_size = 0ULL;
                     std::cout <<"\n Full perm:" << std::endl;
-                    result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,9999);
+                    result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal+1);
                     std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
                     std::cout << "\n Permutation: ";
                     

@@ -1,5 +1,5 @@
 #include "../headers/grafo.h"
-
+#include <cstdlib>
 
 Grafo::Grafo(const char* dir, const char* filename)
 {
@@ -32,7 +32,7 @@ Grafo::Grafo(const char* dir, const char* filename)
         input >> u >> v;
         u--;
         v--;
-
+        std::cout<<"\nu : "<<u<<" v: "<<v<<"\n";
         Neighbors[u].insert(v);
         Neighbors[v].insert(u);
 
@@ -66,15 +66,37 @@ string Grafo::toString(){
     return ss.str();
 }
 
-inline int abs(int x){
-    if(x < 0)
-         return -x;
-    return x;
+inline int Abs(int v){
+
+    //int v;           // we want to find the absolute value of v
+    unsigned int r;  // the result goes here 
+    int const mask = v >> sizeof(int) * CHAR_BIT - 1;
+
+    //return (v ^ mask) - mask;
+    return (v + mask) ^ mask;
 }
 
 
-//tag eh a permutacao vigente
+//In short, tag is the permutation
+int Grafo::ppartial_cost(int tag[],int len){
+    
+    int sum = 0;
+    int pos = len-1;
+    int tag_pos = tag[pos];
+    
+    int* list = Adj[pos]; //len-1 is the position in the permutation
+        
+    for(int j = 0 ; j < Neighbors[pos].size(); j++){ //neighborhood of the vertex  
 
+        if( list[j] >= len) //not yet in the permutation
+              continue;            
+        sum += Abs(tag_pos - tag[ list[j] ]);
+            
+    }//for
+    
+    return sum;
+
+}/////////////////////////////
 
 int Grafo::cost_test(int tag[], int len){
     int sum = 0;
@@ -88,7 +110,7 @@ int Grafo::cost_test(int tag[], int len){
                 continue;
               }  
             
-            if(i < list[j]){/// por que i < list[j]?
+            if(i < list[j]){/// we can remove it... redundant 
                 sum += abs(tag[i] - tag[ list[j] ]);
             }
         }
