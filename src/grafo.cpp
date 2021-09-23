@@ -90,6 +90,7 @@ int Grafo::ppartial_cost(int tag[],int len){
 
         if( list[j] >= len) //not yet in the permutation
               continue;            
+        
         sum += Abs(tag_pos - tag[ list[j] ]);
             
     }//for
@@ -140,9 +141,6 @@ int Grafo::cost(int tag[]){
 
 int Grafo::subCost(int tag[], int vertices[], int len){
 
-    std::cout <<"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    std::cout<<" Len: "<< len << std::endl;
-    std::cout<<" Vertices: "<< std::endl;
 
     for(int k = 0; k < len; k++){
         std::cout   << " " << vertices[k];

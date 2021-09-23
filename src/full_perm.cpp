@@ -168,132 +168,6 @@ int NEW_BP_all_perm_serial(unsigned long long *tree_size, unsigned long long *qt
 }
 
 
-
-int aaabt_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo *grafo, int *permutation, int upper_bound){
-
-    unsigned flag = 0;
-    unsigned bit_test = 0;
-    int vertice[_MAX_]; //representa o ciclo
-    int i, nivel; //para dizer que 0-1 ja foi visitado e a busca comeca de 1, bote 2
-    unsigned cont  = 0;
-    unsigned long long local_tree = 0ULL;
-    //int best_sol = std::numeric_limits<int>::max();
-    int best_sol = upper_bound;
-    
-    int current_sol = 0;
-    int num_sols = 0;
-    //int N = grafo->numNodes+1;
-    int N = grafo->numNodes;
-    int partial_cost = 0;
-    int partial_sol = 0;    
-    int stack[_MAX_];
-    int count = 0;
-
-    /*init*/
-    for (i = 0; i < N; ++i) { //
-        vertice[i] = _EMPTY_;
-    }
-
-
-    //vertice[0] = 4;
-    //flag |= (1ULL<<4);
-    //nivel = 1;
-
-    while(true){ //search itself
-
-        vertice[nivel]++;
-        bit_test = 0;
-        bit_test |= (1<<vertice[nivel]);
-
-        if(vertice[nivel] == N+1){ //all combinations for a given depth have been evaluated
-            vertice[nivel] = _EMPTY_;
-        }
-        else{
-
-            if (!(flag & bit_test) ){ //is it feasible?
-
-                if(nivel == 0){
-                    ++local_tree;
-                    stack[nivel] = 0;
-                    flag |= (1ULL<<vertice[nivel]);
-                    nivel++;
-                    continue;
-                } //at least two 
-                    
-                current_sol = grafo->cost_test(vertice, nivel+1);
-                partial_cost = grafo->ppartial_cost(vertice,nivel+1);
-
-                //  std::cout<<"Partial: "<<"\n";
-                //   for(int k = 0; k < N; k++){
-                //        std::cout   << " " << vertice[k];
-                //   }
-                // // // // //cout<<std::endl<<" Leng: "<< nivel <<" Custo: "<< grafo->cost(vertice)<<" Custo ln: "<<grafo->cost_test(vertice, nivel)<<std::endl;
-                
-                
-                cout<<" Leng: "<< nivel+1<<" Partial cost: "<< current_sol<<" Cost test: "<<partial_sol+grafo->ppartial_cost(vertice,nivel+1)<<"\n";
-                
-
-                if(current_sol < best_sol){
-                
-
-                    flag |= (1ULL<<vertice[nivel]);
-                    partial_sol += partial_cost; 
-                    //current_sol = partial_cost; 
-                    
-                    stack[nivel] = partial_cost;
-                    
-                    nivel++;
-                    ++local_tree;
-                    
-                    if (nivel == N && current_sol<best_sol){ //a complete solution 
-
-                        ++num_sols;
-                        best_sol = current_sol;
-                        std::copy(vertice, vertice + N, permutation);
-                        cout<<std::endl<<"Sol "<<num_sols<< " :"<<best_sol<<" "<<std::endl;
-                        
-
-                        if(count == 1){
-                        for(int k = 0; k < N; k++)
-                            std::cout   << " " << vertice[k];
-                            std::cout<<"\n\n";
-                            count++;
-
-                            exit(1);
-                        }
-                     
-                    }//a complete solution
-                    else//not a complete solution
-                        continue;
-                }//prune by value
-                else
-                    continue;
-            }
-            else //no, not valid
-                continue;
-
-        }//first else
-
-        nivel--; 
-
-        partial_sol-=stack[nivel];
-        flag &= ~(1ULL<<vertice[nivel]);
-
-        if(nivel < 0)
-            break;
-        //termination condition of the search
-
-
-    }//end while -- end of the enumeration
-
-
-    *tree_size = local_tree;
-    *qtd_sol = num_sols;
-
-    return best_sol;
-}
-
-
 int bt_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo *grafo, int *permutation, int upper_bound){
 
     unsigned flag = 0;
@@ -302,12 +176,10 @@ int bt_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo 
     int i, nivel; //para dizer que 0-1 ja foi visitado e a busca comeca de 1, bote 2
     unsigned cont  = 0;
     unsigned long long local_tree = 0ULL;
-    //int best_sol = std::numeric_limits<int>::max();
     int best_sol = upper_bound;
     
     int current_sol = 0;
     int num_sols = 0;
-    //int N = grafo->numNodes+1;
     int N = grafo->numNodes;
     int partial_cost = 0;
     int partial_sol = 0;    
