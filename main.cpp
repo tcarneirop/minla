@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
                     cpu0 = get_cpu_time();
                     
                     std::cout <<"\n Full perm:" << std::endl;
-                    //result = NEW_BP_all_perm_serial(&tree_size, &qtd_sol, &grafo, permutation);
+                    result = NEW_BP_all_perm_serial(&tree_size, &qtd_sol, &grafo, permutation);
                     std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
                     std::cout << "\n Permutation: ";
                     
@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
                     qtd_sol = 0ULL; tree_size = 0ULL;
                     cpu0 = get_cpu_time();
                     std::cout <<"\n Backtracking:" << std::endl;
-                    result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal+1);
+                    result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal);
                     std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
                     std::cout << "\n Permutation: ";
                     
@@ -220,7 +220,6 @@ int main(int argc, char *argv[])
 
 
                     output.close();
-
 
 
                 }
