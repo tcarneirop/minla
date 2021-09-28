@@ -6,6 +6,7 @@
 #define BOOST_ALLOW_DEPRECATED_HEADERS
 #define BOOST_BIND_GLOBAL_PLACEHOLDERS
 
+#include "headers/partial_search"
 #include "headers/grafo.h"
 #include "headers/multistart.h"
 #include "headers/hillclimb.h"
@@ -143,8 +144,6 @@ int main(int argc, char *argv[])
 
 
 
-               
-
                     /// result = gg.solve(out);
 
 
@@ -206,7 +205,7 @@ int main(int argc, char *argv[])
                     qtd_sol = 0ULL; tree_size = 0ULL;
                     cpu0 = get_cpu_time();
                     std::cout <<"\n Backtracking:" << std::endl;
-                    result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal);
+                    result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optima)l;
                     std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
                     std::cout << "\n Permutation: ";
                     
@@ -217,7 +216,6 @@ int main(int argc, char *argv[])
                     std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
                     cpu1 = get_cpu_time();
                     std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
-
 
                     output.close();
 
