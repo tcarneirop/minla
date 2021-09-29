@@ -6,7 +6,7 @@
 #define BOOST_ALLOW_DEPRECATED_HEADERS
 #define BOOST_BIND_GLOBAL_PLACEHOLDERS
 
-#include "headers/partial_search"
+#include "headers/partial_search.h"
 #include "headers/grafo.h"
 #include "headers/multistart.h"
 #include "headers/hillclimb.h"
@@ -46,6 +46,8 @@ int main(int argc, char *argv[])
     DIR *diretorio = 0;
     struct dirent *entrada = 0;
     unsigned char isFile = 0x8;
+
+    int cutoff_depth = atoi(argv[2]);
 
     diretorio = opendir(argv[1]);
 
@@ -187,13 +189,26 @@ int main(int argc, char *argv[])
 
                     cpu0 = get_cpu_time();
                     
-                    std::cout <<"\n Full perm:" << std::endl;
-                    result = NEW_BP_all_perm_serial(&tree_size, &qtd_sol, &grafo, permutation);
-                    std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
-                    std::cout << "\n Permutation: ";
+                    // std::cout <<"\n Full perm:" << std::endl;
+                    // result = NEW_BP_all_perm_serial(&tree_size, &qtd_sol, &grafo, permutation);
+                    // std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
+                    // std::cout << "\n Permutation: ";
                     
-                    for (auto i = 0; i < grafo.numNodes; ++i)
-                        std::cout << permutation[i] << ' ';
+                    // for (auto i = 0; i < grafo.numNodes; ++i)
+                    //     std::cout << permutation[i] << ' ';
+
+                    // std::cout<<std::endl<<std::endl<<"Qtd: "<<qtd_sol<<std::endl;
+                    // std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
+                    // cpu1 = get_cpu_time();
+                    // std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
+
+
+                    qtd_sol = 0ULL; tree_size = 0ULL;
+                    cpu0 = get_cpu_time();
+                    std::cout <<"\n Partial search - \n Cutoff depth: " << cutoff_depth<<std::endl;
+
+                    result = partial_search(cutoff_depth, &tree_size, &qtd_sol, &grafo, 0, grafo.optimal+1);
+   
 
                     std::cout<<std::endl<<std::endl<<"Qtd: "<<qtd_sol<<std::endl;
                     std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
@@ -202,10 +217,12 @@ int main(int argc, char *argv[])
 
 
 
+
+
                     qtd_sol = 0ULL; tree_size = 0ULL;
                     cpu0 = get_cpu_time();
                     std::cout <<"\n Backtracking:" << std::endl;
-                    result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optima)l;
+                    //result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal+1);
                     std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
                     std::cout << "\n Permutation: ";
                     

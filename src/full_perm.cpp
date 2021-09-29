@@ -173,7 +173,7 @@ int bt_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo 
     unsigned flag = 0;
     unsigned bit_test = 0;
     int vertice[_MAX_]; //representa o ciclo
-    int i, nivel; //para dizer que 0-1 ja foi visitado e a busca comeca de 1, bote 2
+    int i, nivel = 0; //para dizer que 0-1 ja foi visitado e a busca comeca de 1, bote 2
     unsigned cont  = 0;
     unsigned long long local_tree = 0ULL;
     int best_sol = upper_bound;
@@ -213,10 +213,9 @@ int bt_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo 
                 } //at least two 
                     
                 partial_cost = grafo->ppartial_cost(vertice,nivel+1);
-
+               
                 if(partial_sol+partial_cost < best_sol){
                 
-
                    // cout<<" Leng: "<< nivel+1<<" Partial cost: "<< current_sol<<" Cost test: "<<partial_sol+grafo->ppartial_cost(vertice,nivel+1)<<"\n";
                 
                     flag |= (1ULL<<vertice[nivel]);
@@ -247,7 +246,6 @@ int bt_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo 
         }//first else
 
         nivel--; 
-        
         //std::cout<<"\n alor";
 
         partial_sol-=stack[nivel];

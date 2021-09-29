@@ -71,7 +71,6 @@ inline int Abs(int v){
     //int v;           // we want to find the absolute value of v
     unsigned int r;  // the result goes here 
     int const mask = v >> sizeof(int) * CHAR_BIT - 1;
-
     //return (v ^ mask) - mask;
     return (v + mask) ^ mask;
 }
@@ -85,6 +84,11 @@ int Grafo::ppartial_cost(int tag[],int len){
     int tag_pos = tag[pos];
     
     int* list = Adj[pos]; //len-1 is the position in the permutation
+
+    //std::cout<<"List: "<<"\n";
+    //for(int j = 0 ; j < Neighbors[pos].size(); j++){
+    //    std::cout<<" "<<list[j]<<"\n";
+   // }
         
     for(int j = 0 ; j < Neighbors[pos].size(); j++){ //neighborhood of the vertex  
 
@@ -94,7 +98,7 @@ int Grafo::ppartial_cost(int tag[],int len){
         sum += Abs(tag_pos - tag[ list[j] ]);
             
     }//for
-    
+    //std::cout<<" LEN: "<<len<<" SUM: "<<sum<<"\n";
     return sum;
 
 }/////////////////////////////
