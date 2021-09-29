@@ -13,7 +13,7 @@
 #include "headers/full_perm.h"
 #include "headers/greedygenerator.h"
 #include "headers/greedyadaptativegen.h"
-//eu// #include "grasp.h"
+#include "headers/minla_node.h"//eu// #include "grasp.h"
 //eu// #include "vnd.h"
 //eu// #include "vns.h"
 //eu// #include "simulatedannealing.h"
@@ -42,7 +42,6 @@ double get_cpu_time(){
 int main(int argc, char *argv[])
 {
 
-
     DIR *diretorio = 0;
     struct dirent *entrada = 0;
     unsigned char isFile = 0x8;
@@ -52,7 +51,7 @@ int main(int argc, char *argv[])
     diretorio = opendir(argv[1]);
 
     if (diretorio == 0) {
-       std::cerr << "Nao foi possivel abrir diretorio." << std::endl;
+       std::cerr << "Unable to open the dir." << std::endl;
        exit (1);
     }
 
@@ -61,7 +60,7 @@ int main(int argc, char *argv[])
 
     std::ofstream output("resultados/resultados.txt", ofstream::out);
 
-    output << "\t\t\t RELATÓRIO DAS INSTÂNCIAS " << std::endl;
+    output << "\t\t\t INSTANCE REPORT: " << std::endl;
 
     try {
             while (entrada = readdir(diretorio))
@@ -73,9 +72,9 @@ int main(int argc, char *argv[])
                     double cpu0, cpu1;
 
 
-                    std::cout << "INSTÂNCIA: " << entrada->d_name << endl;
+                    std::cout << "INSTANCE: " << entrada->d_name << endl;
 
-                    output << "INSTÂNCIA: " << entrada->d_name << endl;
+                    output << "INSTANCE: " << entrada->d_name << endl;
 
 
                     //this is the permutatiob
@@ -184,10 +183,10 @@ int main(int argc, char *argv[])
                             
                     // output << "\n\n";
 
-                    unsigned long long qtd_sol = 0ULL, tree_size = 0ULL;
+                    //unsigned long long qtd_sol = 0ULL, tree_size = 0ULL;
 
 
-                    cpu0 = get_cpu_time();
+                    // cpu0 = get_cpu_time();
                     
                     // std::cout <<"\n Full perm:" << std::endl;
                     // result = NEW_BP_all_perm_serial(&tree_size, &qtd_sol, &grafo, permutation);
@@ -203,36 +202,40 @@ int main(int argc, char *argv[])
                     // std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
 
 
-                    qtd_sol = 0ULL; tree_size = 0ULL;
+                    unsigned long long qtd_sol = 0ULL; unsigned long long tree_size = 0ULL;
                     cpu0 = get_cpu_time();
-                    std::cout <<"\n Partial search - \n Cutoff depth: " << cutoff_depth<<std::endl;
+                    std::cout <<"\n Partial search -  Cutoff depth: " << cutoff_depth<<std::endl;
 
-                    result = partial_search(cutoff_depth, &tree_size, &qtd_sol, &grafo, 0, grafo.optimal+1);
-   
-
-                    std::cout<<std::endl<<std::endl<<"Qtd: "<<qtd_sol<<std::endl;
-                    std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
-                    cpu1 = get_cpu_time();
-                    std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
-
-
-
-
-
-                    qtd_sol = 0ULL; tree_size = 0ULL;
-                    cpu0 = get_cpu_time();
-                    std::cout <<"\n Backtracking:" << std::endl;
-                    //result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal+1);
-                    std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
-                    std::cout << "\n Permutation: ";
+                    Minla_node *subsolutions_pool = minla_start_pool(&grafo, cutoff_depth);
+                    result = minla_partial_search(cutoff_depth, &tree_size, &qtd_sol, &grafo, subsolutions_pool, grafo.optimal+1);
                     
-                    for (auto i = 0; i < grafo.numNodes; ++i)
-                        std::cout << permutation[i] << ' ';
-
+                    minla_print_pool(subsolutions_pool, qtd_sol, cutoff_depth);
+                    std::cout<<"Maximum pool size: "<<minla_max_pool_size(&grafo,cutoff_depth)<<"\n";
                     std::cout<<std::endl<<std::endl<<"Qtd: "<<qtd_sol<<std::endl;
                     std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
                     cpu1 = get_cpu_time();
                     std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
+
+
+
+
+
+
+
+                    // qtd_sol = 0ULL; tree_size = 0ULL;
+                    // cpu0 = get_cpu_time();
+                    // std::cout <<"\n Backtracking:" << std::endl;
+                    // //result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal+1);
+                    // std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
+                    // std::cout << "\n Permutation: ";
+                    
+                    // for (auto i = 0; i < grafo.numNodes; ++i)
+                    //     std::cout << permutation[i] << ' ';
+
+                    // std::cout<<std::endl<<std::endl<<"Qtd: "<<qtd_sol<<std::endl;
+                    // std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
+                    // cpu1 = get_cpu_time();
+                    // std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
 
                     output.close();
 
