@@ -6,8 +6,6 @@
 #include "../headers/minla_node.h"
 #include "../headers/partial_search.h"
 
-
-
 int minla_max_pool_size(Grafo *grafo,int cutoff_depth) {
     int  x = 1;
     int N = grafo->numNodes;
@@ -112,13 +110,6 @@ int minla_partial_search(int cutoff_depth, unsigned long long *tree_size, unsign
                         std::copy(permutation, permutation+cutoff_depth, pool[num_sols].permutation);
 
                         ++num_sols;
-
-                        //cout<<std::endl<<"Sol "<<num_sols<< " :"<<partial_sol<<" "<<std::endl;
-                        //for(int k = 0; k < cutoff_depth; k++){
-                        //    std::cout   << " " << permutation[k];
-                        //}  
-                        // std::cout   << "\n ";
-
 
                     }//complete solution
                     else continue;
