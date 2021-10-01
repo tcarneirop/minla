@@ -16,6 +16,7 @@ int BP_backtracking_serial(unsigned long long *tree_size, unsigned long long *qt
     int current_sol = 0;
     int num_sols = 0;
     int N = grafo->numNodes+1;
+    int vertex_lb;
    
     /*init*/
     for (i = 0; i < N; ++i) { //

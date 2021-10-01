@@ -1,5 +1,6 @@
 #include "../headers/grafo.h"
 #include <cstdlib>
+#include <math.h>
 
 Grafo::Grafo(const char* dir, const char* filename)
 {
@@ -48,9 +49,18 @@ Grafo::Grafo(const char* dir, const char* filename)
 
     }
 
+
+
+    set_lower_bound();
+    std::cout<<"Lower bound: "<<get_lower_bound()<<"\n";
+    for(int v = 0; v<numNodes;++v){
+        std::cout<<"Lb vetex "<<v<<" "<<get_lower_bound_vertex(v)<<"\n";
+    }
+
     input.close();
 
 }
+
 
 string Grafo::toString(){
     stringstream ss;
@@ -64,6 +74,37 @@ string Grafo::toString(){
     }
 
     return ss.str();
+}
+
+float Grafo::get_lower_bound(){
+    return lower_bound;
+}
+
+
+int Grafo::get_lower_bound_vertex(int vertex){
+    return lb_vertex[vertex];
+}
+
+
+void Grafo::set_lower_bound(){
+
+    float lb = 0.0;
+    int N = numNodes;
+    int degree;
+    int vlb;
+
+    for(int v = 0 ; v < N ; v++){
+
+        int* list = Adj[v];
+        degree = Neighbors[v].size();
+
+        vlb = floor((degree+1)*(degree+1)/4);
+        lb_vertex[v] = vlb;
+        lb+=vlb;
+    }
+
+    lower_bound =  floor(lb/2);
+
 }
 
 inline int Abs(int v){
@@ -116,7 +157,7 @@ int Grafo::cost_test(int tag[], int len){
               }  
             
             if(i < list[j]){/// we can remove it... redundant 
-                sum += abs(tag[i] - tag[ list[j] ]);
+                sum += Abs(tag[i] - tag[ list[j] ]);
             }
         }
     }
@@ -129,7 +170,7 @@ int Grafo::cost(int tag[]){
         int* list = Adj[i];
         for(int j = 0 ; j < Neighbors[i].size(); j++){    
             if(i < list[j]){
-                sum += abs(tag[i] - tag[ list[j] ]);
+                sum += Abs(tag[i] - tag[ list[j] ]);
             }
 
         }

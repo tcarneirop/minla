@@ -16,16 +16,13 @@ int BP_all_perm_serial(unsigned long long *tree_size, unsigned long long *qtd_so
     int current_sol;
     int num_sols = 0;
     int N = grafo->numNodes+1;
-
+    int vetex_lb;
    
     /*init*/
     for (i = 0; i < N; ++i) { //
         vertice[i] = -1;
-        //maybe we need here 0 instead of -1?
     }
-    /*
-        para dizer que 0-1 sao fixos
-     */
+   
     vertice[0] = 0;
     flag |= (1ULL<<0);
     nivel = 1;
@@ -184,6 +181,7 @@ int bt_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo 
     int partial_cost = 0;
     int partial_sol = 0;    
     int stack[_MAX_];
+    int vertex_lb;
 
     /*init*/
     for (i = 0; i < N; ++i) { //
@@ -211,10 +209,13 @@ int bt_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo 
                     nivel++;
                     continue;
                 } //at least two 
-                    
+                
+                vertex_lb = grafo->get_lower_bound_vertex(vertice[nivel]) + partial_sol;
                 partial_cost = grafo->ppartial_cost(vertice,nivel+1);
-               
-                if(partial_sol+partial_cost < best_sol){
+                
+                //std::cout<<"partial cost: "<<partial_sol+partial_cost<<" vertex lb: "<<vertex_lb<<"\n";
+                // 
+                if((vertex_lb < best_sol) && (partial_sol+partial_cost < best_sol) ){
                 
                    // cout<<" Leng: "<< nivel+1<<" Partial cost: "<< current_sol<<" Cost test: "<<partial_sol+grafo->ppartial_cost(vertice,nivel+1)<<"\n";
                 
@@ -227,7 +228,6 @@ int bt_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo 
                     ++local_tree;
                     
                     if (nivel == N ){ //a complete solution 
-
                         ++num_sols;
                         best_sol = partial_sol;
                         std::copy(vertice, vertice + N, permutation);
