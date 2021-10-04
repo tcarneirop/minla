@@ -183,11 +183,8 @@ int bt_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo 
     int stack[_MAX_];
     int vertex_lb;
 
-    /*init*/
-    for (i = 0; i < N; ++i) { //
+    for (i = 0; i < N; ++i)
         vertice[i] = _EMPTY_;
-    }
-
 
     while(true){ //search itself
 

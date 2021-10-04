@@ -60,12 +60,10 @@ int minla_partial_search(int cutoff_depth, unsigned long long *tree_size, int *q
     int partial_sol = 0;    
     int stack[_MAX_];
 
-    /*init*/
-    for (i = 0; i < N; ++i) { //
+    for (i = 0; i < N; ++i)
         permutation[i] = _EMPTY_;
-    }
-
-   
+    
+    
     while(true){ //search itself
 
         permutation[depth]++;

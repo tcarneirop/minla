@@ -79,7 +79,6 @@ int minla_omp_node_explorer(int cutoff_depth, unsigned long long *tree_size, int
     int partial_sol = 0;    
     int stack[_MAX_];
 
-    /*init*/
     for (i = 0; i < N; ++i) { //
         permutation[i] = _EMPTY_;
     }
@@ -88,8 +87,11 @@ int minla_omp_node_explorer(int cutoff_depth, unsigned long long *tree_size, int
     flag = pool[node_id].flag;
     partial_sol = pool[node_id].cost;
 
-    for(i = 0; i<cutoff_depth;++i)
-        permutation[i] = pool[node_id].permutation[i];
+    //for(i = 0; i<cutoff_depth;++i)
+    //    permutation[i] = pool[node_id].permutation[i];
+
+    std::copy(pool[node_id].permutation, pool[node_id].permutation+cutoff_depth, permutation);
+
     
     while(true){ //search itself
 
