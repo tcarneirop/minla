@@ -7,6 +7,7 @@
 typedef struct minla_node{
 
 	unsigned int flag;
+	int cost;
 	int permutation[_MAX_DEPTH_];
 
 } Minla_node;

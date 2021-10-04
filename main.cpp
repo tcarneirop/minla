@@ -13,6 +13,7 @@
 #include "headers/full_perm.h"
 #include "headers/greedygenerator.h"
 #include "headers/greedyadaptativegen.h"
+#include "headers/minla_omp_search.h"
 #include "headers/minla_node.h"//eu// #include "grasp.h"
 //eu// #include "vnd.h"
 //eu// #include "vns.h"
@@ -203,36 +204,37 @@ int main(int argc, char *argv[])
                     tree_size = 0ULL;
 
                     cpu0 = get_cpu_time();
-                    std::cout <<"\n Partial search -  Cutoff depth: " << cutoff_depth<<std::endl;
+                    minla_call_omp_search(cutoff_depth, &grafo,grafo.optimal+1);
+
+                    //std::cout <<"\n Partial search -  Cutoff depth: " << cutoff_depth<<std::endl;
 
 
-                    Minla_node *subsolutions_pool = minla_start_pool(&grafo, cutoff_depth);
-                    result = minla_partial_search(cutoff_depth, &tree_size, &qtd_sol, &grafo, subsolutions_pool, grafo.optimal+1);
+                    //Minla_node *subsolutions_pool = minla_start_pool(&grafo, cutoff_depth);
+                    //result = minla_partial_search(cutoff_depth, &tree_size, &qtd_sol, &grafo, subsolutions_pool, grafo.optimal+1);
                     
-                    minla_print_pool(subsolutions_pool, qtd_sol, cutoff_depth);
+                    //minla_print_pool(subsolutions_pool, qtd_sol, cutoff_depth);
     
-                    std::cout<<"Maximum pool size: "<<minla_max_pool_size(&grafo,cutoff_depth)<<"\n";
+                    //std::cout<<"Maximum pool size: "<<minla_max_pool_size(&grafo,cutoff_depth)<<"\n";
+                    //std::cout<<std::endl<<std::endl<<"Qtd: "<<qtd_sol<<std::endl;
+                    //std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
+                    cpu1 = get_cpu_time();
+                    std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
+
+
+                    qtd_sol = 0ULL; tree_size = 0ULL;
+                    cpu0 = get_cpu_time();
+                    std::cout <<"\n Backtracking:" << std::endl;
+                    result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal+1);
+                    std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
+                    std::cout << "\n Permutation: ";
+                    
+                    for (auto i = 0; i < grafo.numNodes; ++i)
+                        std::cout << permutation[i] << ' ';
+
                     std::cout<<std::endl<<std::endl<<"Qtd: "<<qtd_sol<<std::endl;
                     std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
                     cpu1 = get_cpu_time();
                     std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
-
-                    exit(1);
-
-                    // qtd_sol = 0ULL; tree_size = 0ULL;
-                    // cpu0 = get_cpu_time();
-                    // std::cout <<"\n Backtracking:" << std::endl;
-                    // result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal+1);
-                    // std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
-                    // std::cout << "\n Permutation: ";
-                    
-                    // for (auto i = 0; i < grafo.numNodes; ++i)
-                    //     std::cout << permutation[i] << ' ';
-
-                    // std::cout<<std::endl<<std::endl<<"Qtd: "<<qtd_sol<<std::endl;
-                    // std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
-                    // cpu1 = get_cpu_time();
-                    // std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
 
                     output.close();
 

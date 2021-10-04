@@ -210,12 +210,12 @@ int bt_serial(unsigned long long *tree_size, unsigned long long *qtd_sol, Grafo 
                     continue;
                 } //at least two 
                 
-                vertex_lb = grafo->get_lower_bound_vertex(vertice[nivel]) + partial_sol;
+               // vertex_lb = grafo->get_lower_bound_vertex(vertice[nivel]) + partial_sol;
                 partial_cost = grafo->ppartial_cost(vertice,nivel+1);
                 
                 //std::cout<<"partial cost: "<<partial_sol+partial_cost<<" vertex lb: "<<vertex_lb<<"\n";
-                // 
-                if((vertex_lb < best_sol) && (partial_sol+partial_cost < best_sol) ){
+                // (vertex_lb < best_sol) && 
+                if((partial_sol+partial_cost < best_sol) ){
                 
                    // cout<<" Leng: "<< nivel+1<<" Partial cost: "<< current_sol<<" Cost test: "<<partial_sol+grafo->ppartial_cost(vertice,nivel+1)<<"\n";
                 

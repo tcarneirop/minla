@@ -28,7 +28,7 @@ void minla_print_pool(Minla_node *pool, int pool_size, int cutoff_depth){
         for(int j = 0; j<cutoff_depth; ++j ){
             std::cout<<pool[i].permutation[j]<<" ";
         }//
-        std::cout<<"flag: "<<pool[i].flag<<" "<<"\n";
+        std::cout<<"flag: "<<pool[i].flag<<" "<<"Cost: "<<pool[i].cost<<"\n";
     }//
 
 }//print pool
@@ -42,7 +42,7 @@ Minla_node* minla_start_pool(Grafo *grafo, int cutoff_depth){
 }
 
 
-int minla_partial_search(int cutoff_depth, unsigned long long *tree_size, unsigned long long *qtd_valid_subsolutions, 
+int minla_partial_search(int cutoff_depth, unsigned long long *tree_size, int *qtd_valid_subsolutions, 
     Grafo *grafo, Minla_node *pool, int upper_bound){
 
     unsigned flag = 0;
@@ -89,8 +89,6 @@ int minla_partial_search(int cutoff_depth, unsigned long long *tree_size, unsign
                 
 
                 partial_cost = grafo->ppartial_cost(permutation,depth+1);
-               
-                //std::cout<<"partial cost "<<partial_cost<<" "<<N<<"\n";
 
                 if(partial_sol+partial_cost < best_sol){
                 
@@ -106,7 +104,7 @@ int minla_partial_search(int cutoff_depth, unsigned long long *tree_size, unsign
                     if (depth == cutoff_depth){ //a complete solution 
                         
                         pool[num_sols].flag = flag;
-
+                        pool[num_sols].cost = partial_sol;
                         std::copy(permutation, permutation+cutoff_depth, pool[num_sols].permutation);
 
                         ++num_sols;
@@ -130,7 +128,6 @@ int minla_partial_search(int cutoff_depth, unsigned long long *tree_size, unsign
         if(depth < 0)
             break;
         //termination condition of the search
-
 
     }//end while -- end of the enumeration
 
