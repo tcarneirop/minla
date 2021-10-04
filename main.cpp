@@ -200,11 +200,7 @@ int main(int argc, char *argv[])
                     // std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
 
 
-                    qtd_sol = 0ULL; 
-                    tree_size = 0ULL;
-
-                    cpu0 = get_cpu_time();
-                    minla_call_omp_search(cutoff_depth, &grafo,grafo.optimal+1);
+                    minla_call_omp_search(cutoff_depth, &grafo,grafo.optimal);
 
                     //std::cout <<"\n Partial search -  Cutoff depth: " << cutoff_depth<<std::endl;
 
@@ -217,14 +213,13 @@ int main(int argc, char *argv[])
                     //std::cout<<"Maximum pool size: "<<minla_max_pool_size(&grafo,cutoff_depth)<<"\n";
                     //std::cout<<std::endl<<std::endl<<"Qtd: "<<qtd_sol<<std::endl;
                     //std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
-                    cpu1 = get_cpu_time();
-                    std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
+   
 
 
                     qtd_sol = 0ULL; tree_size = 0ULL;
                     cpu0 = get_cpu_time();
                     std::cout <<"\n Backtracking:" << std::endl;
-                    result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal+1);
+                    result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal);
                     std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
                     std::cout << "\n Permutation: ";
                     
