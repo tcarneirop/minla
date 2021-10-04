@@ -15,8 +15,9 @@ void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
     unsigned long long initial_search_tree_size = 0ULL;
     unsigned long long final_search_tree_size = 0ULL;
     int best_sol = upper_bound;
+    std::cout.precision(5);
 
-    std::cout <<"\n Partial search -  Cutoff depth: " << cutoff_depth<<std::endl;
+    std::cout <<"\n Partial search -  Cutoff depth: " << cutoff_depth<<"\n";
 
     std::chrono::steady_clock clk;   // create an object of `steady_clock` class
     
@@ -29,8 +30,9 @@ void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
    // minla_print_pool(subsolutions_pool, pool_size, cutoff_depth);
     
     std::cout<<"Maximum pool size: "<<minla_max_pool_size(grafo,cutoff_depth)<<"\n";
-    std::cout<<std::endl<<std::endl<<"Pool size: "<<pool_size<<std::endl;
+    std::cout<<std::endl<<std::endl<<"Pool size: "<<pool_size<<"\n";
 
+    qtd_sol = 0;
     #pragma omp parallel for default(none) firstprivate(best_sol) shared(upper_bound,subsolutions_pool,grafo,cutoff_depth,pool_size) schedule(runtime) reduction(+:final_search_tree_size, qtd_sol)
     for(auto subsol = 0; subsol<pool_size;++subsol){
 
@@ -51,14 +53,14 @@ void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
     
     auto end = clk.now();       // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
     auto time_span = static_cast<std::chrono::duration<double>>(end - start);   // measure time span between start & end
-    std::cout<<"\n Elapsed time: "<< time_span.count() <<" seconds"<<std::endl;
 
-
-    std::cout<<"Upper bound: "<<upper_bound<<"\n";
-    std::cout<<std::endl<<"Tree size: "<<initial_search_tree_size+final_search_tree_size<<std::endl;
+    unsigned long long total_tree = initial_search_tree_size+final_search_tree_size;
+    std::cout<<"Number of solutions found: "<<qtd_sol<<"\n\tOptimal solution: "<<upper_bound<<"\n\n";
+    std::cout<<"Tree size: "<<total_tree<<"\n";
+    std::cout<<fixed<<"Performance: "<<total_tree/time_span.count()<< " nodes/sec\n";
+    std::cout<<"\nElapsed time: "<< time_span.count() <<" seconds"<<"\n";
 
 }
-
 
 
 int minla_omp_node_explorer(int cutoff_depth, unsigned long long *tree_size, int *qtd_sols, 

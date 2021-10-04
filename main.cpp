@@ -14,7 +14,8 @@
 #include "headers/greedygenerator.h"
 #include "headers/greedyadaptativegen.h"
 #include "headers/minla_omp_search.h"
-#include "headers/minla_node.h"//eu// #include "grasp.h"
+#include "headers/minla_node.h"
+#include "headers/backtracking.h"
 //eu// #include "vnd.h"
 //eu// #include "vns.h"
 //eu// #include "simulatedannealing.h"
@@ -219,7 +220,7 @@ int main(int argc, char *argv[])
                     qtd_sol = 0ULL; tree_size = 0ULL;
                     cpu0 = get_cpu_time();
                     std::cout <<"\n Backtracking:" << std::endl;
-                    result = bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal);
+                    result = minla_bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal);
                     std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
                     std::cout << "\n Permutation: ";
                     
