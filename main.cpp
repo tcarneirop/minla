@@ -220,7 +220,7 @@ int main(int argc, char *argv[])
                     qtd_sol = 0ULL; tree_size = 0ULL;
                     cpu0 = get_cpu_time();
                     std::cout <<"\n Backtracking:" << std::endl;
-                    result = minla_bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal);
+                    //result = minla_bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal);
                     std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
                     std::cout << "\n Permutation: ";
                     
