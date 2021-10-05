@@ -109,7 +109,6 @@ int main(int argc, char *argv[])
 
                     //std::cout << std::endl << std::endl << "\n Hill climb: " << result;
 
-
                     //MultiStart ms(&grafo, true);
                     
                     //result = ms.solve(1000, out, &vnd, &hc);
