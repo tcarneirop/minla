@@ -14,6 +14,7 @@
 #include "headers/greedygenerator.h"
 #include "headers/greedyadaptativegen.h"
 #include "headers/minla_omp_search.h"
+#include "headers/minla_gpu_search.h"
 #include "headers/minla_node.h"
 #include "headers/backtracking.h"
 //eu// #include "vnd.h"
@@ -200,7 +201,8 @@ int main(int argc, char *argv[])
                     // std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
 
 
-                    minla_call_omp_search(cutoff_depth, &grafo,grafo.optimal);
+                    //minla_call_omp_search(cutoff_depth, &grafo,grafo.optimal);
+                    minla_call_gpu_search(cutoff_depth, &grafo,grafo.optimal);
 
                     //std::cout <<"\n Partial search -  Cutoff depth: " << cutoff_depth<<std::endl;
 
@@ -216,20 +218,20 @@ int main(int argc, char *argv[])
    
 
 
-                    qtd_sol = 0ULL; tree_size = 0ULL;
-                    cpu0 = get_cpu_time();
-                    std::cout <<"\n Backtracking:" << std::endl;
-                    //result = minla_bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal);
-                    std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
-                    std::cout << "\n Permutation: ";
+                    // qtd_sol = 0ULL; tree_size = 0ULL;
+                    // cpu0 = get_cpu_time();
+                    // std::cout <<"\n Backtracking:" << std::endl;
+                    // //result = minla_bt_serial(&tree_size, &qtd_sol, &grafo, permutation,grafo.optimal);
+                    // std::cout << std::endl << std::endl << "\n Optimizal solution: " << result;
+                    // std::cout << "\n Permutation: ";
                     
-                    for (auto i = 0; i < grafo.numNodes; ++i)
-                        std::cout << permutation[i] << ' ';
+                    // for (auto i = 0; i < grafo.numNodes; ++i)
+                    //     std::cout << permutation[i] << ' ';
 
-                    std::cout<<std::endl<<std::endl<<"Qtd: "<<qtd_sol<<std::endl;
-                    std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
-                    cpu1 = get_cpu_time();
-                    std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
+                    // std::cout<<std::endl<<std::endl<<"Qtd: "<<qtd_sol<<std::endl;
+                    // std::cout<<std::endl<<"Tree size: "<<tree_size<<std::endl;
+                    // cpu1 = get_cpu_time();
+                    // std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
 
                     output.close();
 
