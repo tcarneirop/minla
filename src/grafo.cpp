@@ -1,12 +1,15 @@
 #include "../headers/grafo.h"
 #include <cstdlib>
 #include <math.h>
+#include <limits.h>
+
 
 Grafo::Grafo(const char* dir, const char* filename)
 {
     string file(dir);
     file+=filename;
     int u, v;
+
 
     ifstream input(file.c_str(), ifstream::in);
 
@@ -24,6 +27,10 @@ Grafo::Grafo(const char* dir, const char* filename)
         exit(1);
     }
 
+    stride = numNodes-1;
+    gpu_adj_list = new int[numNodes*(numNodes-1)];
+    gpu_size_adj_list = new int[numNodes];
+
     Adj = new int*[numNodes];
     Neighbors = new set<int>[numNodes];
 
@@ -36,19 +43,42 @@ Grafo::Grafo(const char* dir, const char* filename)
         std::cout<<"\nu : "<<u<<" v: "<<v<<"\n";
         Neighbors[u].insert(v);
         Neighbors[v].insert(u);
-
         h++;
     }
 
     for(int i = 0 ; i < numNodes ; i++){
         Adj[i] = new int[Neighbors[i].size()];
+        gpu_size_adj_list[i] = Neighbors[i].size();
         int count = 0;
-
-        for (int j : Neighbors[i])
+        for (int j : Neighbors[i]){
             Adj[i][count++] = j;
-
+            
+        }
     }
 
+    for(int i = 0 ; i < numNodes ; i++){
+        std::cout<<"Adj list of node: "<<i<<" size: "<<Neighbors[i].size()<<" \n";
+        for (int j : Neighbors[i]){
+            std::cout<<"v: "<<i<<" u: "<<j<<"\n";
+        }
+    }
+
+    for(int i = 0 ; i < numNodes ; i++){
+        int count = 0;
+        for (int j : Neighbors[i]){
+            gpu_adj_list[i*stride+(count)] = j;
+            ++count;
+        }
+    }
+
+
+    for(int v = 0; v <  numNodes; ++v){
+        std::cout<<v<<" - list size: "<<gpu_size_adj_list[v]<<"\n";
+
+        for(int u = 0; u< gpu_size_adj_list[v];++u){
+            std::cout<< v <<" : "<<  gpu_adj_list[v*stride+u] <<"\n";
+        }
+    }
 
 
     set_lower_bound();
@@ -117,6 +147,29 @@ inline int Abs(int v){
 }
 
 
+// //In short, tag is the permutation
+// int Grafo::vector_partial_cost(int tag[],int len, int *gpu_adj_list, int *gpu_size_adj_list){
+    
+//     int sum = 0;
+//     int pos = len-1;
+//     int tag_pos = tag[pos];
+    
+ 
+//     //for(int j = 0 ; j < Neighbors[pos].size(); j++){ //neighborhood of the vertex  
+//     for(int j = 0 ; j < gpu_size_adj_list[pos]; j++){ //neighborhood of the vertex  
+
+//         if( _GPU_ADJ(pos,j) >= len) //not yet in the permutation
+//               continue;            
+        
+//         sum += Abs(tag_pos - tag[ _GPU_ADJ(pos,j) ]);
+            
+//     }//for
+//     //std::cout<<" LEN: "<<len<<" SUM: "<<sum<<"\n";
+//     return sum;
+
+// }/////////////////////////////
+
+
 //In short, tag is the permutation
 int Grafo::ppartial_cost(int tag[],int len){
     
@@ -177,7 +230,6 @@ int Grafo::cost(int tag[]){
     }
     return sum;
 }
-
 
 /// [19:47, 11/08/2021] Mardson: Neighbors são os vizinhos de cada vértice
 //  [19:47, 11/08/2021] Mardson: é como se fosse uma lista de adjacência

@@ -8,6 +8,7 @@
 #include "../headers/partial_search.h"
 #include "../headers/minla_omp_search.h"
 
+
 void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
 
     int pool_size = 0; 
@@ -79,6 +80,7 @@ int minla_omp_node_explorer(int cutoff_depth, unsigned long long *tree_size, int
     int partial_cost = 0;
     int partial_sol = 0;    
     int stack[_MAX_];
+    int stride = N-1;
 
     for (i = 0; i < N; ++i) { //
         permutation[i] = _EMPTY_;
@@ -108,6 +110,8 @@ int minla_omp_node_explorer(int cutoff_depth, unsigned long long *tree_size, int
             if (!(flag & bit_test) ){ //is it valid?
 
                 partial_cost = grafo->ppartial_cost(permutation,depth+1);
+                //partial_cost = v_partial_cost(permutation,depth+1, grafo->gpu_adj_list, grafo->gpu_size_adj_list, stride);
+
 
                 if(partial_sol+partial_cost < best_sol){
                 

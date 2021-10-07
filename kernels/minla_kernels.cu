@@ -18,104 +18,129 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
    }
 }
 
-__global__ void minla_gpu_node_explorer(int cutoff_depth, unsigned long long *tree_size, int *qtd_sols, int *best_sols,
-    int* adj_list, Minla_node *pool, int pool_size,int upper_bound){
+
+#define _GPU_ADJ(v,j) gpu_adj_list[(v)*stride+(j)]
+
+__device__ inline int minla_gpu_Abs(int v){
+
+    int const mask = v >> sizeof(int) * CHAR_BIT - 1;
+    return (v + mask) ^ mask;
+}
+
+
+__device__ inline int minla_gpu_partial_cost(int *tag,int len, int *gpu_adj_list, int *gpu_size_adj_list, int stride){
+    
+    int sum = 0;
+    int pos = len-1;
+    int tag_pos = tag[pos];
+    
+    for(int j = 0 ; j < gpu_size_adj_list[pos]; j++){ //neighborhood of the vertex  
+
+        if( _GPU_ADJ(pos,j) >= len) //not yet in the permutation
+              continue;            
+        
+        sum += minla_gpu_Abs(tag_pos - tag[ _GPU_ADJ(pos,j) ]);
+            
+    }//for
+    return sum;
+
+}/////////////////////////////
+
+
+
+__global__ void minla_gpu_node_explorer(int cutoff_depth, unsigned long long *tree_size, int *qtd_sols, int *best_sols,  
+    int *gpu_adj_list, int *gpu_size_adj_list,
+    Minla_node *pool, int pool_size, int upper_bound, int numNodes){
 
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
-     if(idx<pool_size){ //idx check
+    
+    if(idx<pool_size){ //idx check
 
-    //     unsigned flag = 0;
-    //     unsigned bit_test = 0;
-    //     int permutation[_MAX_]; //representa o ciclo
-    //     int i, depth; //para dizer que 0-1 ja foi visitado e a busca comeca de 1, bote 2
+        unsigned flag = 0;
+        unsigned bit_test = 0;
+        int permutation[_MAX_]; //representa o ciclo
+        int i, depth; //para dizer que 0-1 ja foi visitado e a busca comeca de 1, bote 2
      
-    //     unsigned long long local_tree = 0ULL;
-    //     int best_sol = upper_bound;
+        unsigned long long local_tree = 0ULL;
+        int best_sol = upper_bound;
         
-    //     int current_sol = 0;
-    //     int num_sols = 0;
-    //     int N = grafo->numNodes;
-    //     int partial_cost = 0;
-    //     int partial_sol = 0;    
-    //     int stack[_MAX_];
+        int num_sols = 0;
+        int N = numNodes;
+        int partial_cost = 0;
+        int partial_sol = 0;    
+        int stack[_MAX_];
+        int stride = N-1;
 
-    //     for (i = 0; i < N; ++i) { //
-    //         permutation[i] = _EMPTY_;
-    //     }
+        for (i = 0; i < N; ++i) { //
+            permutation[i] = _EMPTY_;
+        }
 
-    //     depth = cutoff_depth;
-    //     flag = pool[node_id].flag;
-    //     partial_sol = pool[node_id].cost;
+        depth = cutoff_depth;
+        flag = pool[idx].flag;
+        partial_sol = pool[idx].cost;
 
-    //     for(i = 0; i<cutoff_depth;++i)
-    //         permutation[i] = pool[node_id].permutation[i];
+        for(i = 0; i<cutoff_depth;++i)
+            permutation[i] = pool[idx].permutation[i];
+
         
-    //     while(true){ //search itself
+        while(true){ //search itself
 
-    //         permutation[depth]++;
-    //         bit_test = 0;
-    //         bit_test |= (1<<permutation[depth]);
+            permutation[depth]++;
+            bit_test = 0;
+            bit_test |= (1<<permutation[depth]);
 
-    //         if(permutation[depth] == N){ //all combinations for a given depth have been evaluated
-    //             permutation[depth] = _EMPTY_;
-    //         }
-    //         else{
+            if(permutation[depth] == N){ //all combinations for a given depth have been evaluated
+                permutation[depth] = _EMPTY_;
+            }
+            else{
 
-    //             if (!(flag & bit_test) ){ //is it valid?
+                if (!(flag & bit_test) ){ //is it valid?
 
-    //                 partial_cost = grafo->ppartial_cost(permutation,depth+1);
+                    partial_cost = minla_gpu_partial_cost(permutation,depth+1, gpu_adj_list, gpu_size_adj_list, stride);
 
-    //                 if(partial_sol+partial_cost < best_sol){
+                    if(partial_sol+partial_cost < best_sol){
                     
-    //                     //cout<<" Leng: "<< depth+1<<" Partial cost: "<< current_sol<<" Cost test: "<<partial_sol+grafo->ppartial_cost(permutation,depth+1)<<"\n";
-    //                     flag |= (1ULL<<permutation[depth]);
-    //                     partial_sol += partial_cost; 
+                        flag |= (1ULL<<permutation[depth]);
+                        partial_sol += partial_cost; 
                         
-    //                     stack[depth] = partial_cost;
+                        stack[depth] = partial_cost;
                         
-    //                     depth++;
-    //                     ++local_tree;
+                        depth++;
+                        ++local_tree;
                         
-    //                     if (depth == N){ //a complete solution 
+                        if (depth == N){ //a complete solution 
                             
-    //                         ++num_sols;
-    //                         best_sol = partial_sol;
-    //                         //cout<<std::endl<<"Sol "<<num_sols<< " :"<<best_sol<<" "<<std::endl;
-    //                         //for(int k = 1; k < N; k++){
-    //                         //    std::cout   << " " << permutation[k];
-    //                         //}
+                            ++num_sols;
+                            best_sol = partial_sol;
+                            num_sols+=1;
 
-    //                     }//complete solution
-    //                     else continue;
-    //                 }//prune by value
-    //                 else continue;
-    //             }
-    //             else continue;
+                        }//complete solution
+                        else continue;
+                    }//prune by value
+                    else continue;
+                }
+                else continue;
 
-    //         }//first else
+            }//first else
 
-    //         depth--; 
+            depth--; 
             
-    //         //std::cout<<"\n alor";
+            partial_sol-=stack[depth];
+            flag &= ~(1ULL<<permutation[depth]);
 
-    //         partial_sol-=stack[depth];
-    //         flag &= ~(1ULL<<permutation[depth]);
+            if(depth < cutoff_depth)
+                break;
+            //termination condition of the search
 
-    //         if(depth < cutoff_depth)
-    //             break;
-    //         //termination condition of the search
+        }//end while -- end of the enumeration
 
-    //     }//end while -- end of the enumeration
-
-        tree_size[idx] = 1;
-        qtd_sols[idx]  = 1;
-        best_sols[idx]  = 1;
-
+        tree_size[idx] = local_tree;
+        qtd_sols[idx]  = num_sols;
+        best_sols[idx] = best_sol;
 
     }//if idx   
  
 }
-
 
 
 void minla_call_multigpu_kernel(int gpu_id, int cutoff_depth, unsigned long long *tree_size,
@@ -125,7 +150,7 @@ void minla_call_multigpu_kernel(int gpu_id, int cutoff_depth, unsigned long long
    // cudaFuncSetCacheConfig(BP_queens_root_dfs,cudaFuncCachePreferL1);
    
     unsigned long long *vector_of_tree_size_d;
-    int *qtd_sols_d, *best_sol_d, *adj_list_d;
+    int *qtd_sols_d, *best_sol_d,  *gpu_adj_list_d, *gpu_size_adj_list_d;
     
     Minla_node *subsolutions_pool_d;
 
@@ -149,19 +174,24 @@ void minla_call_multigpu_kernel(int gpu_id, int cutoff_depth, unsigned long long
     ////////////////////
 
     cudaMalloc((void**) &vector_of_tree_size_d, pool_size*sizeof(unsigned long long));
-    cudaMalloc((void**) &adj_list_d, sizeof(int)*grafo->numNodes*grafo->numNodes);
     cudaMalloc((void**) &qtd_sols_d,pool_size*sizeof(int));
+    cudaMalloc((void**) &best_sol_d, pool_size*sizeof(int));
+    cudaMalloc((void**) &gpu_adj_list_d, grafo->numNodes*(grafo->numNodes-1)*sizeof(int));
+    cudaMalloc((void**) &gpu_size_adj_list_d, grafo->numNodes*sizeof(int));
     cudaMalloc((void**) &best_sol_d, pool_size*sizeof(int));
     cudaMalloc((void**) &subsolutions_pool_d,pool_size*sizeof(Minla_node));
 
     //memcopy 
 
     cudaMemcpy(subsolutions_pool_d, subsolutions_pool_h, pool_size * sizeof(Minla_node), cudaMemcpyHostToDevice);
+    cudaMemcpy(gpu_adj_list_d,  grafo->gpu_adj_list, grafo->numNodes*(grafo->numNodes-1)*sizeof(int) , cudaMemcpyHostToDevice);
+    cudaMemcpy(gpu_size_adj_list_d, grafo->gpu_size_adj_list, grafo->numNodes*sizeof(int), cudaMemcpyHostToDevice);
+
 
     std::cout<<"### Regular BP-DFS search. ###\n";
-    
-    minla_gpu_node_explorer<<< num_blocks,_MINLA_BLOCK_SIZE_>>> (cutoff_depth, vector_of_tree_size_d, qtd_sols_d, best_sol_d,
-        adj_list_d, subsolutions_pool_d, pool_size,upper_bound);   
+
+    minla_gpu_node_explorer<<< num_blocks,_MINLA_BLOCK_SIZE_>>> (cutoff_depth, vector_of_tree_size_d, qtd_sols_d, best_sol_d,gpu_adj_list_d, 
+        gpu_size_adj_list_d, subsolutions_pool_d, pool_size,upper_bound, grafo->numNodes);   
  
     gpuErrchk( cudaDeviceSynchronize() );
     gpuErrchk( cudaPeekAtLastError() );
@@ -177,6 +207,8 @@ void minla_call_multigpu_kernel(int gpu_id, int cutoff_depth, unsigned long long
 
     std::cout<<"Local tree size: "<<local_tree_size<<"\n";
     std::cout<<"qtd_sols: "<<local_qtd_sols<<"\n";
+    *tree_size += local_tree_size;
+    *qtd_sols += local_qtd_sols;
 
     cudaFree(vector_of_tree_size_d);
     cudaFree(qtd_sols_d);

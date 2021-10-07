@@ -17,6 +17,7 @@
 #define ITER 100
 #define TAM 1000
 
+
 //using namespace std;
 
 using lsmethod = function<int( int[], int, bool)>;
@@ -37,7 +38,12 @@ public:
     void set_lower_bound();
     float get_lower_bound();
     int get_lower_bound_vertex(int vertex);
-    
+
+    //int vector_partial_cost(int tag[],int len, int *gpu_adj_list, int *gpu_size_adj_list);
+
+    int *gpu_adj_list;
+    int *gpu_size_adj_list;
+    int stride;
     int** Adj; //adj[i] = vetor de vertices adjacentes do vertice i
     set<int>* Neighbors; //set[i] = conjunto de vertices adjacentes do vertice i
     int numNodes; //número de vértices
