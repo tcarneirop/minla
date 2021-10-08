@@ -8,6 +8,11 @@
 #include "../headers/partial_search.h"
 #include "../headers/minla_omp_search.h"
 
+
+//@todo: implement the atomic coherency of the incumbent solution.
+//@todo: retrieve the permutation in parallel
+//@todo: in the search: verify and update upper bound
+
 void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
 
     int pool_size = 0; 
@@ -33,24 +38,24 @@ void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
     std::cout<<std::endl<<std::endl<<"Pool size: "<<pool_size<<"\n";
 
     qtd_sol = 0;
-    #pragma omp parallel for default(none) firstprivate(best_sol) shared(upper_bound,subsolutions_pool,grafo,cutoff_depth,pool_size) schedule(runtime) reduction(+:final_search_tree_size, qtd_sol)
+    #pragma omp parallel for default(none) private(best_sol) shared(upper_bound,subsolutions_pool,grafo,cutoff_depth,pool_size) schedule(runtime) reduction(+:final_search_tree_size, qtd_sol)
     for(auto subsol = 0; subsol<pool_size;++subsol){
 
         unsigned long long local_tree_size = 0ULL;
         int local_qtd_sol = 0;
-       
         best_sol = minla_omp_node_explorer(cutoff_depth, &local_tree_size, &local_qtd_sol, grafo, subsolutions_pool, subsol, upper_bound);
         final_search_tree_size +=local_tree_size;
         qtd_sol+=local_qtd_sol;
 
         #pragma omp critical
         {
-            if(best_sol<upper_bound)
+            if(best_sol<upper_bound){
                 upper_bound = best_sol;
+            }
         }
 
     }
-    
+
     auto end = clk.now();       // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
     auto time_span = static_cast<std::chrono::duration<double>>(end - start);   // measure time span between start & end
 
@@ -61,7 +66,6 @@ void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
     std::cout<<"\nElapsed time: "<< time_span.count() <<" seconds"<<"\n";
 
 }
-
 
 int minla_omp_node_explorer(int cutoff_depth, unsigned long long *tree_size, int *qtd_sols, 
     Grafo *grafo, Minla_node *pool, int node_id, int upper_bound){
@@ -80,6 +84,7 @@ int minla_omp_node_explorer(int cutoff_depth, unsigned long long *tree_size, int
     int partial_cost = 0;
     int partial_sol = 0;    
     int stack[_MAX_];
+    int stride = N-1;
 
     for (i = 0; i < N; ++i) { //
         permutation[i] = _EMPTY_;
@@ -109,6 +114,8 @@ int minla_omp_node_explorer(int cutoff_depth, unsigned long long *tree_size, int
             if (!(flag & bit_test) ){ //is it valid?
 
                 partial_cost = grafo->ppartial_cost(permutation,depth+1);
+                //partial_cost = v_partial_cost(permutation,depth+1, grafo->gpu_adj_list, grafo->gpu_size_adj_list, stride);
+
 
                 if(partial_sol+partial_cost < best_sol){
                 
