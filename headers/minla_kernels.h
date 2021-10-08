@@ -10,4 +10,7 @@
 void minla_call_multigpu_kernel(int gpu_id, int cutoff_depth, unsigned long long *local_tree_size,
 	int *qtd_sol, Grafo *grafo, int upper_bound, int pool_size,  Minla_node *subsolutions_pool_h);
 
+void minla_call_const_multigpu_kernel(int gpu_id, int cutoff_depth, unsigned long long *tree_size,
+    int *qtd_sols, Grafo *grafo, int upper_bound, int pool_size,  Minla_node *subsolutions_pool_h);
+
 #endif

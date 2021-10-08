@@ -49,7 +49,8 @@ int main(int argc, char *argv[])
     struct dirent *entrada = 0;
     unsigned char isFile = 0x8;
 
-    int cutoff_depth = atoi(argv[2]);
+    int cutoff_depth = atoi(argv[3]);
+    char* type = argv[3];
 
     diretorio = opendir(argv[1]);
 
@@ -201,9 +202,23 @@ int main(int argc, char *argv[])
                     // std::cout << std::endl <<"\n CPU Time  = " << cpu1  - cpu0  << " seg" << std::endl;
 
 
-                    //minla_call_omp_search(cutoff_depth, &grafo,grafo.optimal);
-                    minla_call_gpu_search(cutoff_depth, &grafo,grafo.optimal);
+                        std::string type = argv[2];
+                        if(type=="omp"){
+                            minla_call_omp_search(cutoff_depth, &grafo,grafo.optimal);
+                        }
+                        else{
+                            if(type == "gpu")
+                                minla_call_gpu_search(cutoff_depth, &grafo,grafo.optimal,argv[4]);
+                            else{
+                                std::cout<<"Wrong parameters - main\n";
+                                return 1;
+                            }
 
+                        }
+                        
+                     
+                    
+                    
                     //std::cout <<"\n Partial search -  Cutoff depth: " << cutoff_depth<<std::endl;
 
 

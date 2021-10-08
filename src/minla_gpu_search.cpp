@@ -9,7 +9,7 @@
 #include "../headers/minla_gpu_search.h"
 #include "../headers/minla_kernels.h"
 
-void minla_call_gpu_search(int cutoff_depth, Grafo *grafo, int upper_bound){
+void minla_call_gpu_search(int cutoff_depth, Grafo *grafo, int upper_bound, std::string type){
 
     int pool_size = 0; 
     int qtd_sol = 0;
@@ -35,8 +35,21 @@ void minla_call_gpu_search(int cutoff_depth, Grafo *grafo, int upper_bound){
     pool_size = qtd_sol;
     qtd_sol = 0;
 
-    minla_call_multigpu_kernel(0, cutoff_depth, &final_search_tree_size,&qtd_sol, grafo, upper_bound, pool_size,  subsolutions_pool);
+    if(type == "g"){
+        minla_call_multigpu_kernel(0, cutoff_depth, &final_search_tree_size,&qtd_sol, grafo, upper_bound, pool_size,  subsolutions_pool);
+    }
+    else{
+        if(type == "c")
+            minla_call_const_multigpu_kernel(0, cutoff_depth, &final_search_tree_size,&qtd_sol, grafo, upper_bound, pool_size,  subsolutions_pool);
+        else{
+            
+            std::cout<<"\nWrong parameters - gpu (global or constant memory?)\n";
+            exit(1);
+        }
 
+    }
+
+   
     auto end = clk.now();       // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
     auto time_span = static_cast<std::chrono::duration<double>>(end - start);   // measure time span between start & end
 

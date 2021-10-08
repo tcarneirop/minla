@@ -9,6 +9,10 @@
 #include "../headers/minla_omp_search.h"
 
 
+//@todo: implement the atomic coherency of the incumbent solution.
+//@todo: retrieve the permutation in parallel
+//@todo: in the search: verify and update upper bound
+
 void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
 
     int pool_size = 0; 
@@ -34,24 +38,24 @@ void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
     std::cout<<std::endl<<std::endl<<"Pool size: "<<pool_size<<"\n";
 
     qtd_sol = 0;
-    #pragma omp parallel for default(none) firstprivate(best_sol) shared(upper_bound,subsolutions_pool,grafo,cutoff_depth,pool_size) schedule(runtime) reduction(+:final_search_tree_size, qtd_sol)
+    #pragma omp parallel for default(none) private(best_sol) shared(upper_bound,subsolutions_pool,grafo,cutoff_depth,pool_size) schedule(runtime) reduction(+:final_search_tree_size, qtd_sol)
     for(auto subsol = 0; subsol<pool_size;++subsol){
 
         unsigned long long local_tree_size = 0ULL;
         int local_qtd_sol = 0;
-       
         best_sol = minla_omp_node_explorer(cutoff_depth, &local_tree_size, &local_qtd_sol, grafo, subsolutions_pool, subsol, upper_bound);
         final_search_tree_size +=local_tree_size;
         qtd_sol+=local_qtd_sol;
 
         #pragma omp critical
         {
-            if(best_sol<upper_bound)
+            if(best_sol<upper_bound){
                 upper_bound = best_sol;
+            }
         }
 
     }
-    
+
     auto end = clk.now();       // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
     auto time_span = static_cast<std::chrono::duration<double>>(end - start);   // measure time span between start & end
 

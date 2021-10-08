@@ -7,7 +7,7 @@
 
 #define _MINLA_BLOCK_SIZE_ 128
 
-void minla_call_gpu_search(int cutoff_depth, Grafo *grafo, int upper_bound);
+void minla_call_gpu_search(int, Grafo *, int, std::string);
 
 
 //int minla_call_multigpu_search(int gpu_id, int cutoff_depth, unsigned long long *local_tree_size, int *best_sol, 

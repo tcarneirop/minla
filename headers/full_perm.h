@@ -2,7 +2,7 @@
 #define BP_ALL_PERM_H
 
 #define _EMPTY_ -1
-#define _MAX_ 16
+#define _MAX_ 64
 
 
 #include "grafo.h"
