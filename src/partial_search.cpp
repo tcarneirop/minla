@@ -13,7 +13,6 @@ int minla_max_pool_size(Grafo *grafo,int cutoff_depth) {
 
     if(cutoff_depth==1)
         return N;
-
     for (i = 0; i < cutoff_depth; ++i) {
         x *= (N - i);
     }
@@ -35,9 +34,20 @@ void minla_print_pool(Minla_node *pool, int pool_size, int cutoff_depth){
 
 Minla_node* minla_start_pool(Grafo *grafo, int cutoff_depth){
 
-    int pool_size = minla_max_pool_size(grafo, cutoff_depth);
+    if(cutoff_depth>_MAX_DEPTH_){
+        std::cout<<"Cutoff depth bigger than the maximum depth defined in minlanode.h: "<<_MAX_DEPTH_<<".\n";
+        exit(1);
+    }
+
+    unsigned int pool_size = minla_max_pool_size(grafo, cutoff_depth);
     Minla_node* pool = static_cast<Minla_node*>(malloc(pool_size*sizeof(Minla_node)));
-    std::cout<<"\nPool of size "<<pool_size<<" created\n";
+
+    if (pool == NULL) {
+        std::cout<<"Fatal: failed to allocate " << pool_size <<" nodes of size "<<sizeof(Minla_node)<<" bytes ( "<<pool_size*sizeof(Minla_node)/1000000000<<" GB ).\n";
+        exit(1);
+    }
+
+    std::cout<<"\nPool of size "<<pool_size<<" - "<<pool_size*sizeof(Minla_node)/1000000<<"(MB) allocated.\n";
     return pool;
 }
 
@@ -63,7 +73,6 @@ int minla_partial_search(int cutoff_depth, unsigned long long *tree_size, int *q
     for (i = 0; i < N; ++i)
         permutation[i] = _EMPTY_;
     
-    
     while(true){ //search itself
 
         permutation[depth]++;
@@ -85,7 +94,6 @@ int minla_partial_search(int cutoff_depth, unsigned long long *tree_size, int *q
                     continue;
                 } //at least two 
                 
-
                 partial_cost = grafo->ppartial_cost(permutation,depth+1);
 
                 if(partial_sol+partial_cost < best_sol){
@@ -104,7 +112,6 @@ int minla_partial_search(int cutoff_depth, unsigned long long *tree_size, int *q
                         pool[num_sols].flag = flag;
                         pool[num_sols].cost = partial_sol;
                         std::copy(permutation, permutation+cutoff_depth, pool[num_sols].permutation);
-
                         ++num_sols;
 
                     }//complete solution

@@ -2,7 +2,7 @@
 #define MINLA_PREFIX_HH
 
 
-#define _MAX_DEPTH_ 10
+#define _MAX_DEPTH_ 8
 
 typedef struct minla_node{
 

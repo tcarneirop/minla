@@ -13,13 +13,33 @@
 //@todo: retrieve the permutation in parallel
 //@todo: in the search: verify and update upper bound
 
+void progress_bar(int upper_bound, int qtd_sol, int nodes_evaluated, int pool_size, unsigned long long partial_tree){
+
+    float percent = (float)nodes_evaluated/(float)pool_size;
+    int interval = (percent*100);
+
+    std::cout<<" [ ";
+
+    for(int x = 0; x<interval-1; ++x){
+        std::cout<<"|";
+    }
+
+    std::cout<<"] \n";
+  //  elapsed = getCurrentTime() - start_chkpt;
+    std::cout<<interval<<"% # Nodes remaining: "<< pool_size-nodes_evaluated<< " # < Partial tree: " << partial_tree<<" > \n"; 
+    //<<" > < Elapsed time: ",  elapsed," (s) > #\en";
+    ///////////
+}
+
 void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
 
     int pool_size = 0; 
+    int nodes_evaluated = 0;
     int qtd_sol = 0;
     unsigned long long initial_search_tree_size = 0ULL;
     unsigned long long final_search_tree_size = 0ULL;
     int best_sol = upper_bound;
+    float limit = 0.05;
     std::cout.precision(5);
 
     std::cout <<"\n Partial search -  Cutoff depth: " << cutoff_depth<<"\n";
@@ -28,29 +48,35 @@ void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
     
     auto start = clk.now();
 
-
     Minla_node *subsolutions_pool = minla_start_pool(grafo, cutoff_depth);
     minla_partial_search(cutoff_depth, &initial_search_tree_size, &qtd_sol, grafo, subsolutions_pool, upper_bound);
     pool_size = qtd_sol;
-   // minla_print_pool(subsolutions_pool, pool_size, cutoff_depth);
+    minla_print_pool(subsolutions_pool, pool_size, cutoff_depth);
     
     std::cout<<"Maximum pool size: "<<minla_max_pool_size(grafo,cutoff_depth)<<"\n";
     std::cout<<std::endl<<std::endl<<"Pool size: "<<pool_size<<"\n";
 
     qtd_sol = 0;
-    #pragma omp parallel for default(none) private(best_sol) shared(upper_bound,subsolutions_pool,grafo,cutoff_depth,pool_size) schedule(runtime) reduction(+:final_search_tree_size, qtd_sol)
+    #pragma omp parallel for default(none) firstprivate(best_sol) shared(std::cout,limit,nodes_evaluated,upper_bound,subsolutions_pool,grafo,cutoff_depth,pool_size) schedule(runtime) reduction(+:final_search_tree_size, qtd_sol)
     for(auto subsol = 0; subsol<pool_size;++subsol){
 
         unsigned long long local_tree_size = 0ULL;
         int local_qtd_sol = 0;
         best_sol = minla_omp_node_explorer(cutoff_depth, &local_tree_size, &local_qtd_sol, grafo, subsolutions_pool, subsol, upper_bound);
-        final_search_tree_size +=local_tree_size;
-        qtd_sol+=local_qtd_sol;
 
         #pragma omp critical
         {
+
+            final_search_tree_size += local_tree_size;
+            qtd_sol += local_qtd_sol;
+            ++nodes_evaluated;
             if(best_sol<upper_bound){
                 upper_bound = best_sol;
+                std::cout<<"New solution found: "<<upper_bound<<"\n";
+            }
+            if((float)nodes_evaluated/(float)pool_size > limit){
+                limit=(limit>0.9 ? 0.9 : limit*1.1);
+                progress_bar(upper_bound,qtd_sol,nodes_evaluated,pool_size, final_search_tree_size);
             }
         }
 
@@ -132,10 +158,14 @@ int minla_omp_node_explorer(int cutoff_depth, unsigned long long *tree_size, int
                         
                     	++num_sols;
                         best_sol = partial_sol;
-                        cout<<std::endl<<"Sol "<<num_sols<< " :"<<best_sol<<" "<<std::endl;
-                        for(int k = 1; k < N; k++){
-                            std::cout   << " " << permutation[k];
-                        }
+                        // #pragma omp critical 
+                        // {
+                        //     cout<<std::endl<<"Sol "<<num_sols<< " :"<<best_sol<<" "<<std::endl;
+                        //     for(int k = 1; k < N; k++){
+                        //         std::cout   << " " << permutation[k];
+                        //     }
+
+                        // }
 
                     }//complete solution
                     else continue;
