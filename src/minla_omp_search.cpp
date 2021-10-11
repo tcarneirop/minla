@@ -51,7 +51,7 @@ void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
     Minla_node *subsolutions_pool = minla_start_pool(grafo, cutoff_depth);
     minla_partial_search(cutoff_depth, &initial_search_tree_size, &qtd_sol, grafo, subsolutions_pool, upper_bound);
     pool_size = qtd_sol;
-    minla_print_pool(subsolutions_pool, pool_size, cutoff_depth);
+    //minla_print_pool(subsolutions_pool, pool_size, cutoff_depth);
     
     std::cout<<"Maximum pool size: "<<minla_max_pool_size(grafo,cutoff_depth)<<"\n";
     std::cout<<std::endl<<std::endl<<"Pool size: "<<pool_size<<"\n";
