@@ -2,6 +2,9 @@
 #include <iostream>
 #include <omp.h>
 #include <chrono>
+#include <ctime>
+#include <algorithm>    // std::sort
+#include <random>
 #include "../headers/grafo.h"
 #include "../headers/full_perm.h"
 #include "../headers/minla_node.h"
@@ -12,6 +15,8 @@
 //@todo: implement the atomic coherency of the incumbent solution.
 //@todo: retrieve the permutation in parallel
 //@todo: in the search: verify and update upper bound
+//@todo: lets inline the verification
+//@todo: progress bar with 
 
 void progress_bar(int upper_bound, int qtd_sol, int nodes_evaluated, int pool_size, unsigned long long partial_tree){
 
@@ -24,14 +29,21 @@ void progress_bar(int upper_bound, int qtd_sol, int nodes_evaluated, int pool_si
         std::cout<<"|";
     }
 
-    std::cout<<"] \n";
-  //  elapsed = getCurrentTime() - start_chkpt;
+    std::cout<<" ]\n";
+
+
+    auto end = std::chrono::system_clock::now();
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+
     std::cout<<interval<<"% # Nodes remaining: "<< pool_size-nodes_evaluated<< " # < Partial tree: " << partial_tree<<" > \n"; 
+    std::cout << "System clock: " << std::ctime(&end_time);
+
     //<<" > < Elapsed time: ",  elapsed," (s) > #\en";
     ///////////
 }
 
-void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
+void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound, bool verbose){
 
     int pool_size = 0; 
     int nodes_evaluated = 0;
@@ -39,7 +51,8 @@ void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
     unsigned long long initial_search_tree_size = 0ULL;
     unsigned long long final_search_tree_size = 0ULL;
     int best_sol = upper_bound;
-    float limit = 0.05;
+    std::vector<unsigned long long> vec_thread_local_tree(omp_get_max_threads(), 0ULL);
+    float limit = 0.01;
     std::cout.precision(5);
 
     std::cout <<"\n Partial search -  Cutoff depth: " << cutoff_depth<<"\n";
@@ -57,12 +70,14 @@ void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
     std::cout<<std::endl<<std::endl<<"Pool size: "<<pool_size<<"\n";
 
     qtd_sol = 0;
-    #pragma omp parallel for default(none) firstprivate(best_sol) shared(std::cout,limit,nodes_evaluated,upper_bound,subsolutions_pool,grafo,cutoff_depth,pool_size) schedule(runtime) reduction(+:final_search_tree_size, qtd_sol)
+    //Atention: schedule(runtime)
+    #pragma omp parallel for default(none) firstprivate(best_sol) shared(std::cout,vec_thread_local_tree,limit,nodes_evaluated,upper_bound,subsolutions_pool,grafo,cutoff_depth,pool_size,verbose) schedule(runtime) reduction(+:final_search_tree_size, qtd_sol)
     for(auto subsol = 0; subsol<pool_size;++subsol){
 
         unsigned long long local_tree_size = 0ULL;
         int local_qtd_sol = 0;
         best_sol = minla_omp_node_explorer(cutoff_depth, &local_tree_size, &local_qtd_sol, grafo, subsolutions_pool, subsol, upper_bound);
+        vec_thread_local_tree[omp_get_thread_num()] += local_tree_size;
 
         #pragma omp critical
         {
@@ -74,10 +89,12 @@ void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
                 upper_bound = best_sol;
                 std::cout<<"New solution found: "<<upper_bound<<"\n";
             }
-            if((float)nodes_evaluated/(float)pool_size > limit){
-                limit=(limit>0.9 ? 0.9 : limit*1.1);
+
+            if((float)nodes_evaluated/(float)pool_size >= limit && verbose){
+                limit=(limit>1.0 ? 1.0 : limit*1.1);
                 progress_bar(upper_bound,qtd_sol,nodes_evaluated,pool_size, final_search_tree_size);
             }
+
         }
 
     }
@@ -90,6 +107,15 @@ void minla_call_omp_search(int cutoff_depth, Grafo *grafo, int upper_bound){
     std::cout<<"Tree size: "<<total_tree<<"\n";
     std::cout<<fixed<<"Performance: "<<total_tree/time_span.count()<< " nodes/sec\n";
     std::cout<<"\nElapsed time: "<< time_span.count() <<" seconds"<<"\n";
+
+    std::cout<<"\t Load per thread: "<<"\n";
+
+    std::sort(vec_thread_local_tree.begin(), vec_thread_local_tree.end(), std::greater<>());
+    for(auto i: vec_thread_local_tree){
+        std::cout<<"\t Thread: "<<i<<"\n";
+    }
+    std::cout<<"Irregularity rate: "<<static_cast<float>(vec_thread_local_tree[0]) / static_cast<float>(vec_thread_local_tree[omp_get_max_threads()-1])<<"\n";
+
 
 }
 
@@ -125,6 +151,7 @@ int minla_omp_node_explorer(int cutoff_depth, unsigned long long *tree_size, int
 
     std::copy(pool[node_id].permutation, pool[node_id].permutation+cutoff_depth, permutation);
 
+   // std::cout<<"\n\nUpper bound: "<<upper_bound<<"\n";
     
     while(true){ //search itself
 

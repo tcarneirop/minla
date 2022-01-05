@@ -11,7 +11,7 @@ CUDA_LIB_DIR := $(CUDA_PATH)/lib
 LIBRARY_DIR := ./libs
 C_SOURCES := $(shell find $(C_SRC_DIR) -name '*.cpp')
 
-CPP_FLAGS = -std=c++11 -O3 -march=native -fopenmp -ffast-math
+CPP_FLAGS = -std=c++14 -O3 -march=native -fopenmp -ffast-math
 NVCC_FLAGS = -fPIC -O3
 CXX = g++
 
